@@ -1,0 +1,15 @@
+
+--device - install or enable to build with these packages
+sudo apt install libsdl2-dev libsdl2-image-dev
+sudo apt install libhiredis-dev
+
+--server
+sudo apt install redis-server
+
+sudo systemctl status redis-server
+
+port 6379
+bind 127.0.0.1 ::1 # inital setting
+
+redis-cli
+SET/GET/DEL "keyname" [value]

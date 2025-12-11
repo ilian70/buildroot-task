@@ -13,7 +13,7 @@ enum class LogLevel {
     Debug = 3
 };
 
-LogLevel log_level = LogLevel::Info; // Default log level
+LogLevel logLevel = LogLevel::Info; // Default log level
 
 int parse_argv(int argc, char *argv[])
 {
@@ -24,7 +24,7 @@ int parse_argv(int argc, char *argv[])
         {
             if (i + 1 < argc)
             {
-                log_level = static_cast<LogLevel>(std::stoi(argv[++i]));
+                logLevel = static_cast<LogLevel>(std::stoi(argv[++i]));
             }
         }
     }
@@ -35,10 +35,17 @@ int parse_argv(int argc, char *argv[])
 class Config
 {
 public:
+    std::string_view RedisHostIP = "127.0.0.1";
+    int RedisPort = 6379;
+
     std::string KEY = "current_image"; // redis key to monitor
-    int REFRESH_TIME_SECONDS = 2;
-    std::string IMAGE_FOLDER = "./images/";
-    std::string IMAGE_EXTENSION = ".png";
+    int RefreshTimeGET_sec = 2;
+    std::string ImageFolder = "./images/";
+    std::string ImageExtension = ".png";
+
+    int scree_width = 800;
+    int screen_height = 600;
+    std::string WindowTitle = "Redis Image Viewer";
 
     Config() = default;
 };
@@ -49,36 +56,33 @@ public:
 int main(int argc, char *argv[])
 {
     parse_argv(argc, argv);
-    println("Log level set to: ", (int)log_level);
+    println("Log level set to: ", (int)logLevel);
 
-    // 1. SDL
-    SDLContext sdl(800, 600);
+    Config config; // may be extended to parse from file/args
 
-    if (!sdl.Init("Redis Image Viewer"))
+    // SDL
+    SDLContext sdl(config.scree_width, config.screen_height);
+
+    if (!sdl.Init(config.WindowTitle))
     {
         println("Failed to initialize SDL!");
         return 1;
     }
     println("Successfully initialized SDL.");
 
-    // Configuration
-    constexpr std::string_view REDIS_HOST = "127.0.0.1";
-    const int REDIS_PORT = 6379;
-
-    RedisConnect redis(REDIS_HOST, REDIS_PORT);
+    // Database
+    RedisConnect redis(config.RedisHostIP, config.RedisPort);
     if (!redis.connect())
     {
         println("Failed to connect to Redis server!");
         return 1;
     }
-    println("Connected to Redis server at ", REDIS_HOST, ":", REDIS_PORT);
+    println("Connected to Redis server at ", config.RedisHostIP, ":", config.RedisPort);
 
-    // 2. Main Loop
+    // Main Loop
     SDL_Event e;
     bool quit = false;
-
-    Config config; 
-    std::string current_image_name = "";
+    std::string crntImgName = "";
 
     while (!quit)
     {
@@ -99,20 +103,21 @@ int main(int argc, char *argv[])
         static auto last_check = std::chrono::steady_clock::now();
         auto now = std::chrono::steady_clock::now();
 
-        if (std::chrono::duration_cast<std::chrono::seconds>(now - last_check).count() >= config.REFRESH_TIME_SECONDS)
+        if (std::chrono::duration_cast<std::chrono::seconds>(now - last_check).count() >= config.RefreshTimeGET_sec)
         {
-            std::string imageName = redis.getValueOfKey(std::string(config.KEY));
+            auto imgName = redis.getValueOfKey(std::string(config.KEY));
 
-            if(log_level > LogLevel::Info) println("Redis key '", config.KEY, "' value: ", imageName);
-            if (!imageName.empty() && imageName != current_image_name)
+            if(logLevel > LogLevel::Info) println("Redis key '", config.KEY, "' value: ", imgName);
+            
+            if (!imgName.empty() && imgName != crntImgName)
             {
-                if (log_level > LogLevel::Info) println("New image requested: ", imageName);
+                if (logLevel > LogLevel::Info) println("New image requested: ", imgName);
 
-                std::string full_path = config.IMAGE_FOLDER + imageName + config.IMAGE_EXTENSION;
+                auto fullPath = config.ImageFolder + imgName + config.ImageExtension;
 
-                if (sdl.displayImage(full_path))
+                if (sdl.displayImage(fullPath))
                 {
-                    current_image_name = imageName;
+                    crntImgName = imgName;
                 }
             }
             last_check = now;

@@ -4,9 +4,9 @@
 #include "app.h"
 
 
-Application::Application( Config cfg)
+Application::Application( Config cfg )
     : config(cfg),
-        sdl(config.scree_width, config.screen_height),
+        sdl(config.screen_width, config.screen_height),
         redis(config.RedisHostIP, config.RedisPort)
 {
 }

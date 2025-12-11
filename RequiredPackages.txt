@@ -2,6 +2,7 @@
 --device - install or enable to build with these packages
 sudo apt install libsdl2-dev libsdl2-image-dev
 sudo apt install libhiredis-dev
+sudo sudo apt install -y nlohmann-json3-dev
 
 --server
 sudo apt install redis-server

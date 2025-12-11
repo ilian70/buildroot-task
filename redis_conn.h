@@ -68,15 +68,23 @@ public:
         }
 
         redisReply *reply = (redisReply *)redisCommand(context.get(), "GET %s", key.c_str());        
-        if (reply != NULL) {
-            if (reply->type == REDIS_REPLY_STRING) {
+        if (reply != NULL) 
+        {
+            if (reply->type == REDIS_REPLY_STRING) 
+            {
                 value = reply->str;
             } 
-            else {
-                println("Redis key not found or not a string.");
+            else 
+            {
+                println("Redis key:", key, ",not found or not a string");
             }
+
             freeReplyObject(reply);
-        }        
+        }
+        else 
+        {
+            println("Failed to execute GET command for key:", key);
+        }
         return value;
     }
 

@@ -11,18 +11,21 @@ public:
     // CFG
     struct Config
     {
-        std::string_view RedisHostIP = "127.0.0.1";
+        std::string RedisHostIP = "127.0.0.1";
         int RedisPort = 6379;
 
-        std::string KEY = "current_image"; // redis key to monitor
+        std::string KEY = "ImageId"; // redis key to monitor
         int RefreshTimeGET_sec = 2;
         std::string ImageFolder = "./images/";
         std::string ImageExtension = ".png";
         std::string ImagePrefix = "img";
 
-        int scree_width = 800;
+        int screen_width = 800;
         int screen_height = 600;
         std::string WindowTitle = "Redis Image Viewer";
+
+        // Load configuration from file
+        bool loadFromFile(const std::string &filename);
     };
     enum class LogLevel { Info,  Warn ,  Debug};
 

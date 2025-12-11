@@ -14,7 +14,7 @@ find_package(SDL2 REQUIRED)
 pkg_check_modules(SDL2_IMAGE REQUIRED SDL2_image)
 
 # Define the executable
-add_executable(redis_image_viewer app.cpp main.cpp)
+add_executable(redis_image_viewer main.cpp app.cpp app_cfg.cpp)
 
 # Link all libraries
 target_link_libraries(redis_image_viewer

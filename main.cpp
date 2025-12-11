@@ -6,6 +6,7 @@
 int main(int argc, char *argv[])
 {
     Application::Config cfg; // if required change config defaults here
+    cfg.loadFromFile("./app.cfg.json"); // override from file
 
     Application app( cfg ); // instantiate with config
 

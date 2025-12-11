@@ -21,12 +21,12 @@ B. Start the application - will display window on the
 C. Open Redis CLI 
 
 1. Open terminal and run: redis-cli 
-2. Set the key as SET current_image 1
+2. Set the key as SET Image:Id 1
 
 
 Observe application window updating the image displayed based on the Redis key value changes.
 
-try with SET current_image 2 and so on.
+try with SET Image:Id 2 and so on.
 
 
 D. Exit the application - close the SDL window or press ESC.

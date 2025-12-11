@@ -1,0 +1,12 @@
+    {
+      "RedisHostIP": "127.0.0.1",
+      "RedisPort": 6379,
+      "KEY": "Image:Id",
+      "RefreshTimeGET_sec": 2,
+      "ImageFolder": "./images/",
+      "ImageExtension": ".png",
+      "ImagePrefix": "img",
+      "screen_width": 512,
+      "screen_height": 512,
+      "WindowTitle": "Redis Image Viewer"
+    }

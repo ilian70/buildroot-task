@@ -31,7 +31,7 @@ public:
 
     ~RedisConnect() = default;
 
-    bool connect() {
+    bool Connect() {
         context.reset(redisConnect(host.c_str(), port));
         if (!context || context->err) {
             if (context) {
@@ -47,7 +47,7 @@ public:
         return true;
     }
 
-    void disconnect()
+    void Disconnect()
     {
         context.reset();
 
@@ -58,48 +58,58 @@ public:
         return context != nullptr && context->err == 0;
     }
 
-    std::string getValueOfKey(const std::string &key)
+    std::string GetString(const std::string &key)
     {
+        std::string value = "";
+
         if (!isConnected()) {
             println("Not connected to Redis");
-            return "";
+            return value;
         }
 
-        redisReply *reply = (redisReply *)redisCommand(context.get(), "GET %s", key.c_str());
-        std::string value = "";
-        
+        redisReply *reply = (redisReply *)redisCommand(context.get(), "GET %s", key.c_str());        
         if (reply != NULL) {
             if (reply->type == REDIS_REPLY_STRING) {
                 value = reply->str;
-            } else {
+            } 
+            else {
                 println("Redis key not found or not a string.");
             }
             freeReplyObject(reply);
-        }
-        
+        }        
         return value;
     }
 
-    std::string query(const std::string &command) {
+    // SET, DEL, etc ..
+    std::tuple<std::string, int> Query(std::string command, std::string args) 
+    {
+        std::string result = "";
+        int type = 0;  
+
         if (!isConnected()) {
             println("Not connected to Redis");
-            return "";
+            return {result, type};
         }
 
-        redisReply *reply = (redisReply *)redisCommand(context.get(), command.c_str());
-        std::string result = "";
+        redisReply *reply = (redisReply *)redisCommand(context.get(), command.c_str(), args.c_str());
         
-        if (reply != NULL) {
-            if (reply->type == REDIS_REPLY_STRING) {
+        if (reply != NULL) 
+        {
+            type = reply->type;
+
+            if (type == REDIS_REPLY_STRING) {
                 result = reply->str;
-            } else if (reply->type == REDIS_REPLY_INTEGER) {
+            } 
+            else if (type == REDIS_REPLY_INTEGER) {
                 result = std::to_string(reply->integer);
-            } else if (reply->type == REDIS_REPLY_STATUS) {
+            } 
+            else if (type == REDIS_REPLY_STATUS) {
                 result = reply->str;
             }
+
             freeReplyObject(reply);
         }
         
-        return result;
+        return {result, type};
     }
 };

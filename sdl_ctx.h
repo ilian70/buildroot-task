@@ -18,10 +18,11 @@ public:
         : window(nullptr), renderer(nullptr), texture(nullptr), width(w), height(h) {}
     
     ~SDLContext() {
-        close();
+        Shutdown();
     }
 
-    bool Init(std::string title) {
+    bool Initialise(std::string title) 
+    {
         if (SDL_Init(SDL_INIT_VIDEO) < 0) {
             std::cerr << "SDL could not initialize! SDL_Error: " << SDL_GetError() << std::endl;
             return false;
@@ -52,7 +53,7 @@ public:
         return true;
     }
 
-    bool displayImage(const std::string& image_path) {
+    bool DisplayImage(const std::string& image_path) {
         if (texture != nullptr) {
             SDL_DestroyTexture(texture);
             texture = nullptr;
@@ -79,7 +80,8 @@ public:
         return true;
     }
 
-    void close() {
+    void Shutdown() 
+    {
         if (texture != nullptr) {
             SDL_DestroyTexture(texture);
             texture = nullptr;

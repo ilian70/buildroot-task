@@ -24,17 +24,19 @@ public:
         int screen_height = 600;
         std::string WindowTitle = "Redis Image Viewer";
 
-        // Load configuration from file
+        Config( std::string file );
+        
         bool loadFromFile(const std::string &filename);
     };
     enum class LogLevel { Info,  Warn ,  Debug};
 
     // API
-    Application( Config cfg);
-    int parse_argv(int argc, char *argv[]);
+    Application( Config cfg);    
     bool Initialise();
     void Run();
     void Shutdown();
+
+    static int parse_argv(int argc, char *argv[]);
 
 private:
     void handleEvents(SDL_Event& e);
@@ -46,6 +48,7 @@ private:
     RedisConnect redis;
     bool quit = false;
     std::string crntImgName = "";
-
-    LogLevel logLevel = LogLevel::Info; // Default log level
+public:
+    static inline LogLevel logLevel = LogLevel::Info; // Default log level
+    static inline std::string CfgFile = "./app.cfg.json";
 };

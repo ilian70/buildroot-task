@@ -11,17 +11,19 @@ Application::Application( Config cfg )
 {
 }
 
+//static 
 int Application::parse_argv(int argc, char *argv[])
 {
     for (int i = 1; i < argc; ++i)
     {
         std::string arg = argv[i];
-        if (arg == "--loglevel" || arg == "-l")
+        if ((arg == "--loglevel" || arg == "-l") && i + 1 < argc)
         {
-            if (i + 1 < argc)
-            {
-                logLevel = static_cast<LogLevel>(std::stoi(argv[++i]));
-            }
+            logLevel = static_cast<LogLevel>(std::stoi(argv[++i]));
+        }
+        else if ((arg == "--config" || arg == "-c") && i + 1 < argc)
+        {
+            CfgFile = argv[++i];
         }
     }
     return 0;

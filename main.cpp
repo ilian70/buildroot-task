@@ -5,12 +5,13 @@
 // Main entry point
 int main(int argc, char *argv[])
 {
-    Application::Config cfg; // if required change config defaults here
-    cfg.loadFromFile("./app.cfg.json"); // override from file
+    Application::parse_argv(argc, argv); // anything from run args
+
+    Application::Config cfg(Application::CfgFile); // overrides from file
 
     Application app( cfg ); // instantiate with config
 
-    app.parse_argv(argc, argv); // anything from run args
+    
 
     if (!app.Initialise())
     {

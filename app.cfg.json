@@ -6,7 +6,7 @@
       "ImageFolder": "./images/",
       "ImageExtension": ".png",
       "ImagePrefix": "img",
-      "screen_width": 512,
-      "screen_height": 512,
+      "screen_width": 1000,
+      "screen_height": 1000,
       "WindowTitle": "Redis Image Viewer"
     }

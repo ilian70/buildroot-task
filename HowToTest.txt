@@ -1,0 +1,32 @@
+Prerequisites
+
+ - A working C++ development environment
+ - SDL2 and SDL2_image libraries installed
+ - Redis server running and accessible
+
+A. Build the application - CMakeLists.txt is provided for building the project.
+
+ 1. Clone the repository
+ 2. Navigate to the project directory
+ 3. Create a build directory: mkdir build && cd build
+ 4. Run CMake: cmake ..
+ 5. Build the project: make
+
+
+
+Redis server is installed and running on localhost at default port 6379.
+
+B. Start the application - will display window on the
+
+C. Open Redis CLI 
+
+1. Open terminal and run: redis-cli 
+2. Set the key as SET current_image 1
+
+
+Observe application window updating the image displayed based on the Redis key value changes.
+
+try with SET current_image 2 and so on.
+
+
+D. Exit the application - close the SDL window or press ESC.

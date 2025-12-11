@@ -1,7 +1,7 @@
 // libhiredis-dev
 
 #include <hiredis/hiredis.h>
-#include <iostream>
+
 #include <memory>
 #include <string>
 

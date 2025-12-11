@@ -36,7 +36,7 @@ public:
 private:
     void handleEvents(SDL_Event& e);
     void updateFromRedis();
-
+    std::string formImagePath(std::string id);
 private:
     Config config;
     SDLContext sdl;

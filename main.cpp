@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    app.Run();
+    app.Run(); // main loop (and waiting for events)
 
     app.Shutdown();
 

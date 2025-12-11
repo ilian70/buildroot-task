@@ -81,6 +81,11 @@ void Application::handleEvents(SDL_Event& e)
     }
 }
 
+std::string Application::formImagePath( std::string id )
+{
+    return config.ImageFolder + config.ImagePrefix + id + config.ImageExtension;
+}
+
 void Application::updateFromRedis()
 {
     static auto last_check = std::chrono::steady_clock::now();
@@ -90,17 +95,9 @@ void Application::updateFromRedis()
     {
         auto id = redis.GetString(std::string(config.KEY));
 
-        if (logLevel > LogLevel::Info)
-            println("Redis key '", config.KEY, "' value: ", id);
-
         if (!id.empty() && id != crntImgName)
         {
-            if (logLevel > LogLevel::Info)
-                println("New image requested: ", id);
-
-            auto fullPath = config.ImageFolder + config.ImagePrefix + id + config.ImageExtension;
-
-            if (sdl.DisplayImage(fullPath))
+            if (sdl.DisplayImage(formImagePath(id)))
             {
                 crntImgName = id;
             }

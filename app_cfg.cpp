@@ -2,7 +2,7 @@
 #include <fstream>
 #include <string>
 
-#include <nlohmann/json.hpp>
+#include "json11.hpp"
 
 bool Application::Config::loadFromFile(const std::string &filename) 
 {
@@ -11,33 +11,36 @@ bool Application::Config::loadFromFile(const std::string &filename)
     return false;
   }
 
-  try {
-    nlohmann::json j;
-    file >> j;
-
-    if (j.contains("RedisHostIP"))
-      RedisHostIP = j["RedisHostIP"].get<std::string>();
-    if (j.contains("RedisPort"))
-      RedisPort = j["RedisPort"].get<int>();
-    if (j.contains("KEY"))
-      KEY = j["KEY"].get<std::string>();
-    if (j.contains("RefreshTimeGET_sec"))
-      RefreshTimeGET_sec = j["RefreshTimeGET_sec"].get<int>();
-    if (j.contains("ImageFolder"))
-      ImageFolder = j["ImageFolder"].get<std::string>();
-    if (j.contains("ImageExtension"))
-      ImageExtension = j["ImageExtension"].get<std::string>();
-    if (j.contains("ImagePrefix"))
-      ImagePrefix = j["ImagePrefix"].get<std::string>();
-    if (j.contains("screen_width"))
-      screen_width = j["screen_width"].get<int>();
-    if (j.contains("screen_height"))
-      screen_height = j["screen_height"].get<int>();
-    if (j.contains("WindowTitle"))
-      WindowTitle = j["WindowTitle"].get<std::string>();
-
-    return true;
-  } catch (...) {
+  std::string json_str((std::istreambuf_iterator<char>(file)),
+                       std::istreambuf_iterator<char>());
+  
+  std::string err;
+  json11::Json j = json11::Json::parse(json_str, err);
+  
+  if (!err.empty()) {
     return false;
   }
+
+  if (j["RedisHostIP"].is_string())
+    RedisHostIP = j["RedisHostIP"].string_value();
+  if (j["RedisPort"].is_number())
+    RedisPort = j["RedisPort"].int_value();
+  if (j["KEY"].is_string())
+    KEY = j["KEY"].string_value();
+  if (j["RefreshTimeGET_sec"].is_number())
+    RefreshTimeGET_sec = j["RefreshTimeGET_sec"].int_value();
+  if (j["ImageFolder"].is_string())
+    ImageFolder = j["ImageFolder"].string_value();
+  if (j["ImageExtension"].is_string())
+    ImageExtension = j["ImageExtension"].string_value();
+  if (j["ImagePrefix"].is_string())
+    ImagePrefix = j["ImagePrefix"].string_value();
+  if (j["screen_width"].is_number())
+    screen_width = j["screen_width"].int_value();
+  if (j["screen_height"].is_number())
+    screen_height = j["screen_height"].int_value();
+  if (j["WindowTitle"].is_string())
+    WindowTitle = j["WindowTitle"].string_value();
+
+  return true;
 }

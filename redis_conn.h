@@ -93,6 +93,56 @@ public:
         return value;
     }
 
+    bool SetString(const std::string &key, const std::string &value)
+    {
+        if (!isConnected()) {
+            println("Not connected to Redis");
+            return false;
+        }
+
+        redisReply *reply = (redisReply *)redisCommand(context.get(), "SET %s %s", key.c_str(), value.c_str());
+        bool success = false;
+        
+        if (reply != NULL) 
+        {
+            if (reply->type == REDIS_REPLY_STATUS && std::string(reply->str) == "OK") {
+                success = true;
+            }
+            freeReplyObject(reply);
+        }
+        else 
+        {
+            println("Failed to execute SET command for key:", key);
+        }
+        
+        return success;
+    }
+
+    bool Delete(const std::string &key)
+    {
+        if (!isConnected()) {
+            println("Not connected to Redis");
+            return false;
+        }
+
+        redisReply *reply = (redisReply *)redisCommand(context.get(), "DEL %s", key.c_str());
+        bool success = false;
+        
+        if (reply != NULL) 
+        {
+            if (reply->type == REDIS_REPLY_INTEGER) {
+                success = reply->integer > 0;  // Number of keys deleted
+            }
+            freeReplyObject(reply);
+        }
+        else 
+        {
+            println("Failed to execute DEL command for key:", key);
+        }
+        
+        return success;
+    }
+
     // SET, DEL, etc ..
     std::tuple<std::string, int> Query(std::string command, std::string args) 
     {

@@ -91,7 +91,18 @@ std::string Application::formImagePath( std::string id )
 void Application::updateFromRedis()
 {
     static auto last_check = std::chrono::steady_clock::now();
+    static auto last_heartbeat = std::chrono::steady_clock::now();
     auto now = std::chrono::steady_clock::now();
+
+    // Send heartbeat every 5 seconds
+    if (std::chrono::duration_cast<std::chrono::seconds>(now - last_heartbeat).count() >= 5)
+    {
+        sendHeartbeat();
+        last_heartbeat = now;
+    }
+
+    // Check for remote commands
+    handleRemoteCommands();
 
     if (std::chrono::duration_cast<std::chrono::seconds>(now - last_check).count() >= config.RefreshTimeGET_sec)
     {
@@ -105,5 +116,58 @@ void Application::updateFromRedis()
             }
         }
         last_check = now;
+    }
+}
+
+void Application::sendHeartbeat()
+{
+    auto now = std::chrono::system_clock::now();
+    auto time_t = std::chrono::system_clock::to_time_t(now);
+    auto tm = *std::localtime(&time_t);
+    
+    char timestamp[64];
+    std::strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S", &tm);
+    
+    redis.SetString("App:Heartbeat", std::string(timestamp));
+    
+    // Also set configuration values for remote console
+    redis.SetString("Config:RedisHost", config.RedisHostIP);
+    redis.SetString("Config:RedisPort", std::to_string(config.RedisPort));
+    redis.SetString("Config:ImageFolder", config.ImageFolder);
+    redis.SetString("Config:RefreshInterval", std::to_string(config.RefreshTimeGET_sec));
+    redis.SetString("Config:ScreenWidth", std::to_string(config.screen_width));
+    redis.SetString("Config:ScreenHeight", std::to_string(config.screen_height));
+}
+
+void Application::handleRemoteCommands()
+{
+    auto command = redis.GetString("App:Command");
+    
+    if (!command.empty())
+    {
+        println("Received remote command: ", command);
+        
+        if (command == "refresh")
+        {
+            // Force refresh of current image
+            auto id = redis.GetString(std::string(config.KEY));
+            if (!id.empty())
+            {
+                if (sdl.DisplayImage(formImagePath(id)))
+                {
+                    crntImgName = id;
+                    println("Refreshed image: img", id, ".png");
+                }
+            }
+        }
+        else if (command == "status")
+        {
+            // Send status response
+            std::string status = "Running - Current Image: " + crntImgName;
+            redis.SetString("App:Response", status);
+        }
+        
+        // Clear the command after processing
+        redis.Delete("App:Command");
     }
 }

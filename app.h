@@ -41,6 +41,8 @@ public:
 private:
     void handleEvents(SDL_Event& e);
     void updateFromRedis();
+    void sendHeartbeat();
+    void handleRemoteCommands();
     std::string formImagePath(std::string id);
 private:
     Config config;

@@ -13,15 +13,18 @@ A. Build the application - CMakeLists.txt is provided for building the project.
  5. Build the project: make
 
 
+Redis server is installed and running on localhost or IP 192.168.0.100 at default port 6379.
 
-Redis server is installed and running on localhost at default port 6379.
+External config file app.cfg.json is provided with default Redis server connection details.
+
+Application can be run with optional command --config app.cfg.json to specify which config to use
 
 B. Start the application - will display window on the
 
-C. Open Redis CLI 
+C. Open Redis CLI or provided python script ./run_redis_console.py
 
-1. Open terminal and run: redis-cli 
-2. Set the key as SET Image:Id 1
+ if from redis-clie - Set the key as SET Image:Id 1
+ if from python script - type command set_image 1 or use help to see other commands
 
 
 Observe application window updating the image displayed based on the Redis key value changes.
@@ -32,6 +35,3 @@ try with SET Image:Id 2 and so on.
 D. Exit the application - close the SDL window or press ESC.
 
 
-
-
-Rpi IP static set to 192.168.0.200, 192.168.1.200

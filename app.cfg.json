@@ -1,12 +1,12 @@
-    {
-      "RedisHostIP": "127.0.0.1",
-      "RedisPort": 6379,
-      "KEY": "Image:Id",
-      "RefreshTimeGET_sec": 2,
-      "ImageFolder": "./images/",
-      "ImageExtension": ".png",
-      "ImagePrefix": "img",
-      "screen_width": 1000,
-      "screen_height": 1000,
-      "WindowTitle": "Redis Image Viewer"
-    }
+  {
+    "RedisHostIP": "192.168.0.100",
+    "RedisPort": 6379,
+    "KEY": "Image:Id",
+    "RefreshTimeGET_sec": 2,
+    "ImageFolder": "./images/",
+    "ImageExtension": ".png",
+    "ImagePrefix": "img",
+    "screen_width": 1000,
+    "screen_height": 1000,
+    "WindowTitle": "Redis Image Viewer"
+  }

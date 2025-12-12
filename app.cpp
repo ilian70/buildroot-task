@@ -38,14 +38,14 @@ bool Application::Initialise()
         println("Failed to initialize SDL!");
         return false;
     }
-    println("Successfully initialized SDL.");
+    println("Initialized SDL OK");
 
     if (!redis.Connect())
     {
         println("Failed to connect to Redis server!");
         return false;
     }
-    println("Connected to Redis server at ", config.RedisHostIP, ":", config.RedisPort);
+    println("Connected to Redis server OK");
 
     return true;
 }

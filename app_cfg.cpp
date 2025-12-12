@@ -7,6 +7,8 @@
 
 Application::Config::Config( std::string file )
 {
+    println("Config constructor called with file: ", file);
+
     loadFromFile(file);
 }
 
@@ -24,7 +26,9 @@ bool Application::Config::loadFromFile(const std::string &filename)
     std::string err;
     json11::Json j = json11::Json::parse(json_str, err);
 
-    if (!err.empty()) {
+    if (!err.empty()) 
+    {
+      println("Failed to parse config file: ", err);
       return false;
     }
 
@@ -53,6 +57,8 @@ bool Application::Config::loadFromFile(const std::string &filename)
       screen_height = j["screen_height"].int_value();
     if (j["WindowTitle"].is_string())
       WindowTitle = j["WindowTitle"].string_value();
+
+    println("Successfully loaded config from: ", filename, ", host: ", RedisHostIP, ", port: ", RedisPort);
 
     return true;
 }

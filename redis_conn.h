@@ -43,7 +43,7 @@ public:
             return false;
         }
 
-        //println("Connected to Redis at ", host, ":", port);
+        println("Connected to Redis at ", host, ":", port);
         return true;
     }
 
@@ -57,6 +57,11 @@ public:
     bool isConnected() const {
         return context != nullptr && context->err == 0;
     }
+
+    std::tuple<std::string, int> GetHost() const {
+        return {host, port};
+    }
+
 
     std::string GetString(const std::string &key)
     {

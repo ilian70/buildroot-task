@@ -30,3 +30,8 @@ try with SET Image:Id 2 and so on.
 
 
 D. Exit the application - close the SDL window or press ESC.
+
+
+
+
+Rpi IP static set to 192.168.0.200, 192.168.1.200

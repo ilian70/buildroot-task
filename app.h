@@ -11,7 +11,7 @@ public:
     // CFG
     struct Config
     {
-        std::string RedisHostIP = "127.0.0.1";
+        std::string RedisHostIP = "192.168.0.100"; //"127.0.0.1";
         int RedisPort = 6379;
 
         std::string KEY = "ImageId"; // redis key to monitor

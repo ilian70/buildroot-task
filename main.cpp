@@ -7,7 +7,7 @@ int main(int argc, char *argv[])
 {
     Application::parse_argv(argc, argv); // anything from run args
 
-    Application::Config cfg(Application::CfgFile); // overrides from file
+    Application::Config cfg{Application::CfgFile}; // overrides from file
 
     Application app( cfg ); // instantiate with config
 

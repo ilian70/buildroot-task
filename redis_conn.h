@@ -63,7 +63,7 @@ public:
     }
 
 
-    std::string GetString(const std::string &key)
+    std::string GetString(const std::string &key, bool log = false)
     {
         std::string value = "";
 
@@ -81,7 +81,7 @@ public:
             } 
             else 
             {
-                println("Redis key:", key, ",not found or not a string");
+                if(log) println("Redis key:", key, ",not found or not a string");
             }
 
             freeReplyObject(reply);

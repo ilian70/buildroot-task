@@ -3,7 +3,7 @@
     "RedisPort": 6379,
     "KEY": "Image:Id",
     "RefreshTimeGET_sec": 2,
-    "ImageFolder": "./images/",
+    "ImageFolder": "/var/lib/redis-image-viewer/images/",
     "ImageExtension": ".png",
     "ImagePrefix": "img",
     "screen_width": 1000,

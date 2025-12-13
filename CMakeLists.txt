@@ -31,3 +31,8 @@ target_link_libraries(redis_image_viewer
     ${SDL2_LIBRARIES}
     ${SDL2_IMAGE_LIBRARIES}
 )
+
+# Install the binary and default config into the target rootfs
+install(TARGETS redis_image_viewer RUNTIME DESTINATION bin)
+install(FILES app.cfg.json DESTINATION etc/redis-image-viewer RENAME config.json)
+install(DIRECTORY images/ DESTINATION var/lib/redis-image-viewer/images FILES_MATCHING PATTERN "*.png")

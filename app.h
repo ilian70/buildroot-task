@@ -52,5 +52,6 @@ private:
     std::string crntImgName = "";
 public:
     static inline LogLevel logLevel = LogLevel::Info; // Default log level
-    static inline std::string CfgFile = "./app.cfg.json";
+    // Default to system-installed config; can be overridden via --config
+    static inline std::string CfgFile = "/etc/redis-image-viewer/config.json";
 };

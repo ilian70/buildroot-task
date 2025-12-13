@@ -23,21 +23,33 @@ public:
 
     bool Initialise(std::string title) 
     {
+        // Only force KMSDRM if not running under X11 or Wayland
+
+        const char* x11 = getenv("DISPLAY");
+        const char* wayland = getenv("WAYLAND_DISPLAY");
+        Uint32 win_flags = 0;
+        if (!x11 && !wayland) {
+            SDL_setenv("SDL_VIDEODRIVER", "kmsdrm", 1);
+            win_flags = SDL_WINDOW_FULLSCREEN_DESKTOP;
+        } else {
+            win_flags = SDL_WINDOW_SHOWN;
+        }
+
         if (SDL_Init(SDL_INIT_VIDEO) < 0) {
             std::cerr << "SDL could not initialize! SDL_Error: " << SDL_GetError() << std::endl;
             return false;
         }
-        
-        window = SDL_CreateWindow(title.c_str(), 
-                                  SDL_WINDOWPOS_UNDEFINED, 
-                                  SDL_WINDOWPOS_UNDEFINED, 
-                                  width, height, 
-                                  SDL_WINDOW_SHOWN);
+
+        window = SDL_CreateWindow(title.c_str(),
+                                  SDL_WINDOWPOS_UNDEFINED,
+                                  SDL_WINDOWPOS_UNDEFINED,
+                                  width, height,
+                                  win_flags);
         if (window == nullptr) {
             std::cerr << "Window could not be created! SDL_Error: " << SDL_GetError() << std::endl;
             return false;
         }
-        
+
         renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
         if (renderer == nullptr) {
             std::cerr << "Renderer could not be created! SDL_Error: " << SDL_GetError() << std::endl;

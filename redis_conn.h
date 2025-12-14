@@ -6,7 +6,9 @@
 #include <string>
 
 #include "print.h"
+#include "logger.h"
 
+extern Logger gLogger; // declare external logger instance
 
 class RedisConnect {
 private:
@@ -33,17 +35,21 @@ public:
 
     bool Connect() {
         context.reset(redisConnect(host.c_str(), port));
-        if (!context || context->err) {
-            if (context) {
-                println("Connection error: ", context->errstr);
+        if (!context || context->err) 
+        {
+            if (context) 
+            {
+                gLogger.log("Connection error: ", context->errstr);
                 context.reset();
-            } else {
-                println("Connection error: can't allocate redis context");
+            } 
+            else 
+            {
+                gLogger.log("Connection error: can't allocate redis context");
             }
             return false;
         }
 
-        println("Connected to Redis at ", host, ":", port);
+        gLogger.log("Connected to Redis at ", host, ":", port);
         return true;
     }
 
@@ -51,7 +57,7 @@ public:
     {
         context.reset();
 
-        println("Disconnected from Redis at ", host, ":", port);
+        gLogger.log("Disconnected from Redis at ", host, ":", port);
     }
 
     bool isConnected() const {
@@ -67,7 +73,8 @@ public:
     {
         std::string value = "";
 
-        if (!isConnected()) {
+        if (!isConnected()) 
+        {
             println("Not connected to Redis");
             return value;
         }
@@ -95,7 +102,8 @@ public:
 
     bool SetString(const std::string &key, const std::string &value)
     {
-        if (!isConnected()) {
+        if (!isConnected()) 
+        {
             println("Not connected to Redis");
             return false;
         }

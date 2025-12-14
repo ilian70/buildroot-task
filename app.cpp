@@ -2,8 +2,11 @@
 #include <thread>
 
 #include "app.h"
+#include "logger.h"
 
+Logger gLogger; // global logger instance
 
+// The Application
 Application::Application( Config cfg )
     : config(cfg),
         sdl(config.screen_width, config.screen_height),
@@ -29,23 +32,32 @@ int Application::parse_argv(int argc, char *argv[])
     return 0;
 }
 
+
+
 bool Application::Initialise()
 {
-    println("Log level set to: ", (int)logLevel);
+    bool loggerOpened = gLogger.Open( config.LogFile );
+    if (!loggerOpened) {
+        println("Failed to open log file: ", config.LogFile);
+    }
+
+    gLogger.log("Log level set to: ", (int)logLevel);
 
     if (!sdl.Initialise(config.WindowTitle))
     {
-        println("Failed to initialize SDL!");
+        gLogger.log("Failed to initialize SDL!");
         return false;
     }
-    println("Initialized SDL OK");
+    gLogger.log("Initialized SDL OK");
 
-    if (!redis.Connect())
+    bool redisConnected = redis.Connect();
+    if (!redisConnected)
     {
-        println("Failed to connect to Redis server!");
-        return false;
+        gLogger.log("Failed to connect to Redis server!");
     }
-    println("Connected to Redis server OK");
+    else {
+        gLogger.log("Connected to Redis server OK");
+    }
 
     return true;
 }

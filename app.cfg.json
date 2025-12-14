@@ -8,5 +8,6 @@
     "ImagePrefix": "img",
     "screen_width": 1000,
     "screen_height": 1000,
-    "WindowTitle": "Redis Image Viewer"
+    "WindowTitle": "Redis Image Viewer",
+    "LogFile": "/var/lib/redis-image-viewer/log.txt"
   }

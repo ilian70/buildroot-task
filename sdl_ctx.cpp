@@ -3,6 +3,13 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <string>
+#include <fcntl.h>
+#include <sys/mman.h>
+#include <sys/ioctl.h>
+#include <linux/fb.h>
+#include <unistd.h>
+#include <cstring>
+#include <algorithm>
 
 #include "logger.h"
 extern Logger gLogger; // declare external logger instance
@@ -19,13 +26,22 @@ SDLContext::~SDLContext() {
 
 //---------------------------------------------------
 //* INIT
-bool SDLContext::Initialise(std::string title) 
+bool SDLContext::Initialise(std::string title,int drawMode, int rgbOrder, int autoInit) 
 {
-    this->title = title;
+    this->title = title; // settings
+    this->drawMode = drawMode;
+    this->rgbOrder = rgbOrder;
+    this->autoInit = autoInit;
+
+    gLogger.log("SDLContext::Init: title: ", title, 
+                 ", drawMode: ", drawMode, 
+                 ", rgbOrder: ", rgbOrder,
+                 ", autoInit: ", autoInit);
+
 
     bool ok = tryInitialise();
 
-    if(!ok)
+    if( ! ok && autoInit == 1 )
         startAutoInitialise();
     else 
         stopAutoInitialise();
@@ -35,10 +51,18 @@ bool SDLContext::Initialise(std::string title)
 
 bool SDLContext::tryInitialise() 
 {
-    if(initialized) 
+    if(driverFound) 
     {
         Shutdown();
     }
+
+    // IMG Loaders
+    int imgFlags = IMG_INIT_PNG | IMG_INIT_JPG;
+    if (!(IMG_Init(imgFlags) & imgFlags)) {
+        gLogger.log("SDL_image could not initialize! IMG_Error: " + std::string(IMG_GetError()));
+        return false;
+    }
+
 
     // Try multiple video drivers in order of preference
     const char* x11 = getenv("DISPLAY");
@@ -52,21 +76,21 @@ bool SDLContext::tryInitialise()
     if (SDL_Init(SDL_INIT_VIDEO) >= 0) 
     {
         gLogger.log("SDL Init with auto-detected driver: " + std::string(SDL_GetCurrentVideoDriver()));
-        initialized = true;
+        driverFound = true;
     } 
     else 
     {
         gLogger.log("SDL auto-detection failed: " + std::string(SDL_GetError()));
         
         // Try each driver explicitly
-        for (int i = 0; drivers[i] != nullptr && !initialized; i++) 
+        for (int i = 0; drivers[i] != nullptr && !driverFound; i++) 
         {
             gLogger.log("Trying SDL video driver: " + std::string(drivers[i]));
             
             SDL_setenv("SDL_VIDEODRIVER", drivers[i], 1);
             if (SDL_Init(SDL_INIT_VIDEO) >= 0) {
                 gLogger.log("Success with driver: " + std::string(drivers[i]));
-                initialized = true;
+                driverFound = true;
                 break;
             } 
             else {
@@ -75,14 +99,10 @@ bool SDLContext::tryInitialise()
             }
         }
     }
-    
-    if (!initialized) {
-        gLogger.log("All SDL video drivers failed!");
-        return false;
-    }
-    
+
     // Set fullscreen for headless systems (no X11/Wayland)
-    if (!x11 && !wayland && strcmp(SDL_GetCurrentVideoDriver(), "dummy") != 0) {
+    if (!x11 && !wayland ) //&& strcmp(SDL_GetCurrentVideoDriver(), "dummy") != 0) 
+    {
         win_flags = SDL_WINDOW_FULLSCREEN_DESKTOP;
     }
 
@@ -93,56 +113,28 @@ bool SDLContext::tryInitialise()
                                 win_flags);
     if (window == nullptr) {
         gLogger.log("Window could not be created! SDL_Error: " + std::string(SDL_GetError()));
-        return false;
     }
 
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     if (renderer == nullptr) {
         gLogger.log("Renderer could not be created! SDL_Error: " + std::string(SDL_GetError()));
-        return false;
     }
 
-    int imgFlags = IMG_INIT_PNG | IMG_INIT_JPG;
-    if (!(IMG_Init(imgFlags) & imgFlags)) {
-        gLogger.log("SDL_image could not initialize! IMG_Error: " + std::string(IMG_GetError()));
-        return false;
-    }
+    // int imgFlags = IMG_INIT_PNG | IMG_INIT_JPG;
+    // if (!(IMG_Init(imgFlags) & imgFlags)) {
+    //     gLogger.log("SDL_image could not initialize! IMG_Error: " + std::string(IMG_GetError()));
+    //     return false;
+    // }
 
-    return true;
-}
-
-bool SDLContext::DisplayImage(const std::string& image_path) 
-{
-    if(!initialized) 
+    if (!driverFound) 
     {
+        gLogger.log("All SDL video drivers failed!");
         return false;
     }
-
-    if (texture != nullptr) {
-        SDL_DestroyTexture(texture);
-        texture = nullptr;
-    }
-
-    SDL_Surface* loadedSurface = IMG_Load(image_path.c_str());
-    if (loadedSurface == nullptr) {
-        gLogger.log("Unable to load image " + image_path + "! IMG_Error: " + std::string(IMG_GetError()));
-        return false;
-    }
-
-    texture = SDL_CreateTextureFromSurface(renderer, loadedSurface);
-    SDL_FreeSurface(loadedSurface);
-    
-    if (texture == nullptr) {
-        gLogger.log("Unable to create texture from " + image_path + "! SDL_Error: " + std::string(SDL_GetError()));
-        return false;
-    }
-
-    SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, texture, NULL, NULL);
-    SDL_RenderPresent(renderer);
 
     return true;
 }
+
 
 void SDLContext::Shutdown() 
 {
@@ -161,5 +153,5 @@ void SDLContext::Shutdown()
     IMG_Quit();
     SDL_Quit();
 
-    initialized = false;
+    driverFound = false;
 }

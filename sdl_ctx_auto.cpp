@@ -25,7 +25,7 @@ void SDLContext::startAutoInitialise()
         
         while (!stopAutoInit && attempts < MAX_TRIES) 
         {
-            if (!initialized) 
+            if (!driverFound) 
             {
                 gLogger.log("Auto-initialize: Attempting to initialize SDL... (Attempt " + 
                            std::to_string(attempts + 1) + "/" + std::to_string(MAX_TRIES) + ")");
@@ -45,7 +45,7 @@ void SDLContext::startAutoInitialise()
             }
         }
         
-        if (attempts >= MAX_TRIES && !initialized) {
+        if (attempts >= MAX_TRIES && !driverFound) {
             gLogger.log("Auto-initialize: Failed after " + std::to_string(MAX_TRIES) + " attempts. Giving up.");
         }
     });

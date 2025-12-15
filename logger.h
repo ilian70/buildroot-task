@@ -4,7 +4,8 @@
 #include <fstream>
 #include <iostream>
 #include <mutex>
-
+#include <syslog.h>
+#include <sstream>
 
 
 class Logger {
@@ -36,9 +37,14 @@ public:
         char timestamp[64];
         std::strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S", &tm);
 
+        std::ostringstream oss;
+        oss << "[" << timestamp << "] ";
+        (oss << ... << args);
+        oss << std::endl;
+
         auto& out = logFile.is_open() ? logFile : std::cout;
-        out << "[" << timestamp << "] ";
-        (out << ... << args);
-        out << std::endl;
-    }
+        out << oss.str(); 
+        out.flush();
+
+        syslog(LOG_INFO, "%s", oss.str().c_str());}
 };

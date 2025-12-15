@@ -24,6 +24,10 @@ public:
         int screen_width = 800;
         int screen_height = 600;
         std::string WindowTitle = "Redis Image Viewer";
+        int DrawMode = 2; // 0=DRM, 1=Blit, 2=Direct memwrite
+        int RGBOrder = 0; // 0=RGB, 1=BGR
+        int SDLAutoInit = 0; // 0=off, 1=on
+
         std::string LogFile = ""; // to console
 
         Config( std::string file );

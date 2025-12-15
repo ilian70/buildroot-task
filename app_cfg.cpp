@@ -58,6 +58,16 @@ bool Application::Config::loadFromFile(const std::string &filename)
     if (j["WindowTitle"].is_string())
       WindowTitle = j["WindowTitle"].string_value();
 
+    if (j["DrawMode"].is_number())
+      DrawMode = j["DrawMode"].int_value();
+    if (j["RGBOrder"].is_number())
+      RGBOrder = j["RGBOrder"].int_value();
+    if (j["SDLAutoInit"].is_number())
+      SDLAutoInit = j["SDLAutoInit"].int_value();
+
+    if (j["LogFile"].is_string())
+      LogFile = j["LogFile"].string_value();
+
     println("Successfully loaded config from: ", filename, ", host: ", RedisHostIP, ", port: ", RedisPort);
 
     return true;

@@ -45,7 +45,7 @@ bool Application::Initialise( bool continueOnFail )
 
     gLogger.log("Log level set to: ", (int)logLevel);
 
-    if (!sdl.Initialise(config.WindowTitle))
+    if (!sdl.Initialise(config.WindowTitle, config.DrawMode, config.RGBOrder, config.SDLAutoInit))
     {
         gLogger.log("Failed to initialize SDL!");
 

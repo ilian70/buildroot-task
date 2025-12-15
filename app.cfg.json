@@ -9,5 +9,8 @@
     "screen_width": 1000,
     "screen_height": 1000,
     "WindowTitle": "Redis Image Viewer",
-    "LogFile_Debug": "/var/lib/redis-image-viewer/log.txt"
+    "DrawMode": 2,
+    "RGBOrder": 0,
+    "SDLAutoInit": 0,
+    "LogFile": "/var/lib/redis-image-viewer/log.txt"
   }

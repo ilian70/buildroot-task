@@ -24,6 +24,8 @@ add_executable(redis_image_viewer
     app_cfg.cpp
     json11.cpp
     sdl_ctx_auto.cpp
+    sdl_ctx_draw.cpp
+    sdl_ctx_display.cpp
 )
 
 # Include directories

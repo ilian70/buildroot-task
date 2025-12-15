@@ -1,0 +1,10 @@
+config BR2_PACKAGE_REDIS_IMAGE_VIEWER
+    bool "redis-image-viewer"
+  depends on BR2_INIT_SYSTEMD # runs as systemd service
+    depends on BR2_USE_MMU # SDL2 needs MMU
+    select BR2_PACKAGE_SDL2
+    select BR2_PACKAGE_SDL2_IMAGE
+    select BR2_PACKAGE_HIREDIS
+    help
+      Redis-backed image viewer using SDL2. Monitors a Redis key for image IDs
+      and displays images from /var/lib/redis-image-viewer/images.

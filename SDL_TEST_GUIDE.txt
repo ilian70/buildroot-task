@@ -1,0 +1,141 @@
+SDL & GRAPHICS TEST APPLICATIONS FOR RPi5
+==========================================
+
+Good news! Your buildroot image includes several test applications for SDL and graphics functionality.
+
+AVAILABLE TEST APPLICATIONS:
+============================
+
+1. FB-TEST-APP (Framebuffer Test)
+   =============================
+   Purpose: Test Linux framebuffer functionality
+   Command: fbtest
+   Status: ✅ ENABLED in your config
+   URL: https://github.com/prpplague/fb-test-app
+   
+   What it does:
+   - Tests framebuffer device (/dev/fb0)
+   - Draws patterns, colors, and animations
+   - Useful for verifying framebuffer is working
+   
+   Usage on RPi5:
+   ssh root@<device-ip>
+   fbtest
+
+2. MESA3D-DEMOS (OpenGL/ES Demo Suite)
+   ===================================
+   Purpose: OpenGL and OpenGL ES demonstrations
+   Status: ✅ ENABLED in your config
+   URL: http://mesa3d.org
+   
+   Available commands:
+   - gears: Classic 3D gears animation
+   - glxinfo: OpenGL capabilities info
+   - glxgears: Benchmark with gears
+   - gltrace: OpenGL call tracing
+   
+   Usage on RPi5:
+   ssh root@<device-ip>
+   gears              # 3D gears demo
+   glxinfo            # Check OpenGL info
+   glxgears           # OpenGL benchmark
+
+3. GLMARK2 (OpenGL Benchmark)
+   ==========================
+   Purpose: Comprehensive OpenGL 2.0 and ES 2.0 benchmark
+   Status: ✅ ENABLED in your config (DRM GLESv2 flavor)
+   URL: https://github.com/glmark2/glmark2
+   
+   What it does:
+   - Benchmarks GPU performance
+   - Tests various OpenGL features
+   - Generates performance scores
+   - Good for validating GPU acceleration
+   
+   Usage on RPi5:
+   ssh root@<device-ip>
+   glmark2            # Run full benchmark
+   glmark2 --help     # See options
+   glmark2 -b basic   # Run basic tests only
+
+SDL-SPECIFIC TESTING:
+====================
+
+Your buildroot includes:
+✅ SDL2 with KMS/DRM support (direct framebuffer)
+✅ SDL2 with OpenGL ES support
+✅ SDL2_image (image loading library)
+✅ SDL2_gfx (graphics primitives)
+✅ SDL (legacy SDL1)
+
+Testing SDL on RPi5:
+-------------------
+Your redis-image-viewer app already uses SDL2, so you can test SDL directly:
+1. ssh root@<device-ip>
+2. /usr/bin/redis_image_viewer     # Your app uses SDL
+
+For custom SDL testing, you can:
+1. Write a simple SDL2 test program
+2. Cross-compile it in buildroot
+3. Include it in the image
+4. Run it on RPi5
+
+RECOMMENDED TEST SEQUENCE:
+=========================
+
+1. First, verify framebuffer:
+   fbtest                    # Should see patterns
+
+2. Check OpenGL capabilities:
+   glxinfo                   # Verify GPU acceleration
+
+3. Run graphics benchmark:
+   glmark2 -b basic          # Quick test
+   glmark2                   # Full benchmark
+
+4. Test your SDL app:
+   redis_image_viewer        # Your application
+
+ACCESSING THE DEVICE:
+====================
+
+SSH access (with your registered key):
+ssh root@<device-ip>
+
+Or if you need to connect via HDMI/Monitor:
+1. Connect monitor to RPi5
+2. Connect keyboard/mouse
+3. Login as root
+4. Run test commands directly
+
+TROUBLESHOOTING TIPS:
+====================
+
+If display doesn't work:
+- Check /dev/fb0 exists: ls -l /dev/fb0
+- Check /dev/dri exists: ls -l /dev/dri/
+- Run fbtest first (simplest test)
+
+If OpenGL fails:
+- Check glxinfo output for supported extensions
+- glmark2 needs proper GPU drivers (VC4/V3D enabled in your config)
+- Check /var/log/Xorg.log if X11 is running
+
+For SDL2 testing:
+- Your app should work directly since SDL2 is configured
+- Make sure fbdraw.cpp uses proper SDL2 initialization
+- Check if DISPLAY needs to be set for X11 mode
+
+ADDITIONAL RESOURCES:
+====================
+
+Check what's installed on the image:
+ls /usr/bin/ | grep -E "test|demo|glmark|gears|fbtest"
+ls /usr/lib/
+
+For more detailed testing:
+man glmark2
+man glxinfo
+fbtest --help
+
+Your buildroot is well-configured for graphics/SDL testing!

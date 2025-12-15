@@ -1,0 +1,18 @@
+
+# StdOut, StdErr
+journalctl -u redis-image-viewer.service	    # View all logs for your specific service.
+journalctl -u redis-image-viewer.service -f	    # Follow (tail) the logs in real-time.
+journalctl -u redis-image-viewer.service --since "1 day ago"
+
+
+# REDIRECTION TO FILE 
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/your-application-executable
+
+# Redirect STDOUT and STDERR to a specific file, appending new data
+StandardOutput=append:/var/log/your-service-name.log
+StandardError=append:/var/log/your-service-name.log
+
+# Important: Set the permissions/user for the service to ensure it can write to the log file location
+User=your-app-user

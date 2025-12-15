@@ -1,0 +1,114 @@
+BUILDROOT PACKAGE UPDATE - sdl_ctx_auto.cpp
+=============================================
+
+Your redis-image-viewer application has been updated with the new SDL context auto-initialization module.
+
+UPDATE SUMMARY:
+===============
+
+New File Added:
+- sdl_ctx_auto.cpp: Auto-initialization thread for SDL with retry logic
+
+File Status: ✅ EXISTS at /home/innocore/Projects/br-task/sdl_ctx_auto.cpp
+
+CMakeLists.txt Status: ✅ ALREADY CONFIGURED
+- sdl_ctx_auto.cpp is already listed in the build targets
+- No changes needed to CMakeLists.txt
+
+Buildroot Package Status: ✅ READY FOR BUILD
+- Package uses local source: REDIS_IMAGE_VIEWER_SITE = $(TOPDIR)/../br-task
+- All source files are automatically detected
+- No manual updates needed to .mk files
+
+KEY FEATURES OF sdl_ctx_auto.cpp:
+==================================
+
+The new module provides:
+1. Automatic SDL initialization in a separate thread
+2. Retry logic with configurable MAX_TRIES (currently 10)
+3. 5-second wait between retry attempts (100ms x 50 iterations)
+4. Logging of initialization attempts and results
+5. Graceful shutdown via stopAutoInitialise()
+
+This allows your application to:
+- Continue running even if SDL isn't immediately available
+- Handle delayed display connections (e.g., display plugged in after boot)
+- Log initialization progress for debugging
+
+BUILDING WITH YOUR CHANGES:
+===========================
+
+Method 1: Rebuild just the package (Recommended)
+   cd /home/innocore/Projects/buildroot
+   make redis-image-viewer-rebuild
+
+Method 2: Clean and rebuild the package
+   cd /home/innocore/Projects/buildroot
+   make redis-image-viewer-clean
+   make redis-image-viewer
+
+Method 3: Full image rebuild (includes all dependencies)
+   cd /home/innocore/Projects/buildroot
+   make
+
+WHAT HAPPENS DURING BUILD:
+==========================
+
+1. Buildroot detects changes in /home/innocore/Projects/br-task/
+2. CMake processes CMakeLists.txt (which includes sdl_ctx_auto.cpp)
+3. Compiler builds all source files including the new sdl_ctx_auto.cpp
+4. Binary is installed to the target filesystem
+5. Image is regenerated with updated binary
+
+FILES INVOLVED:
+===============
+
+Source Code:
+- /home/innocore/Projects/br-task/sdl_ctx_auto.cpp ✅
+- /home/innocore/Projects/br-task/sdl_ctx.h (declares interface)
+- /home/innocore/Projects/br-task/logger.h (for logging)
+
+Build Configuration:
+- /home/innocore/Projects/br-task/CMakeLists.txt ✅
+- /home/innocore/Projects/br-task/buildroot-package/redis-image-viewer/redis-image-viewer.mk ✅
+
+NEXT STEPS:
+===========
+
+1. Build the package:
+   cd /home/innocore/Projects/buildroot
+   make redis-image-viewer-rebuild
+
+2. After successful build:
+   make
+   (to create the final image)
+
+3. Flash the image to RPi5
+
+4. Test the new SDL auto-initialization:
+   ssh root@<device-ip>
+   redis_image_viewer
+   (Watch for auto-initialization log messages)
+
+VERIFICATION:
+==============
+
+After building, verify the changes:
+
+1. Check compiled binary includes new code:
+   strings /home/innocore/Projects/buildroot/output/target/usr/bin/redis_image_viewer | grep -i "auto-initialize"
+
+2. Check build log for compilation:
+   cat /home/innocore/Projects/buildroot/output/build/redis-image-viewer-1.0/.build.log | grep -i "sdl_ctx_auto"
+
+NOTES:
+======
+
+✅ No additional dependencies added
+✅ No configuration file changes needed
+✅ Backward compatible with existing code
+✅ SSH key already registered for testing
+✅ Post-build script (post-build.sh) already configured
+✅ All systemd integration already in place
+
+The application is ready for deployment with improved SDL initialization handling!

@@ -1,0 +1,25 @@
+[Unit]
+Description=Redis Image Viewer
+
+#After=multi-user.target
+
+Requires=network.target
+Wants=network-online.target
+After=network.target network-online.target
+
+Requires=graphics.target
+After=graphics.target
+
+
+[Service]
+User=root
+Type=simple
+ExecStart=/usr/bin/redis_image_viewer --config /etc/redis-image-viewer/config.json
+WorkingDirectory=/var/lib/redis-image-viewer
+Restart=on-failure
+RestartSec=5
+
+[Install]
+#WantedBy=multi-user.target
+WantedBy=graphics.target
+                                   

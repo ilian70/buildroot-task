@@ -1,14 +1,12 @@
 [Unit]
 Description=Redis Image Viewer
+Documentation=man:systemd.service(5)
 
-#After=multi-user.target
-
+Requires=network-online.target
 Requires=network.target
-Wants=network-online.target
-After=network.target network-online.target
-
-Requires=graphics.target
-After=graphics.target
+Wants=graphics.target
+After=network.target network-online.target systemd-udev-settle.service
+After=sys-devices-virtual-dri-card0.device
 
 
 [Service]
@@ -18,8 +16,16 @@ ExecStart=/usr/bin/redis_image_viewer --config /etc/redis-image-viewer/config.js
 WorkingDirectory=/var/lib/redis-image-viewer
 Restart=on-failure
 RestartSec=5
+StartLimitIntervalSec=200
+StartLimitBurst=5
+TimeoutStartSec=30
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=redis-image-viewer
+
+Environment="SDL_VIDEODRIVER=kmsdrm"
+Environment="LIBGL_ALWAYS_INDIRECT=0"
 
 [Install]
-#WantedBy=multi-user.target
 WantedBy=graphics.target
-                                   

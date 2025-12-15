@@ -20,8 +20,5 @@ Data is in:
 Config file is in:
 /etc/redis-image-viewer/config
 
-NOTE: As for now - Graphics modules aren't loaded correctly ! (only text messages available from application)
-
-
 ps aux | grep redis-view*
 <PID> root /usr/bin/redis_image_viewer --config /etc/redis-image-viewer/config.txt

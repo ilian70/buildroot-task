@@ -20,6 +20,9 @@ private:
     std::string host;
     int port;
 
+    bool tryConnect();
+    bool retryConnect(int maxTries, int intervalSeconds);
+
 public:
     RedisConnect(const std::string_view host, int port);
     ~RedisConnect() = default;

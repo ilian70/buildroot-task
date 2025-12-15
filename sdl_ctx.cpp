@@ -85,8 +85,6 @@ bool SDLContext::tryInitialise()
         // Try each driver explicitly
         for (int i = 0; drivers[i] != nullptr && !driverFound; i++) 
         {
-            gLogger.log("Trying SDL video driver: " + std::string(drivers[i]));
-            
             SDL_setenv("SDL_VIDEODRIVER", drivers[i], 1);
             if (SDL_Init(SDL_INIT_VIDEO) >= 0) {
                 gLogger.log("Success with driver: " + std::string(drivers[i]));
@@ -119,12 +117,6 @@ bool SDLContext::tryInitialise()
     if (renderer == nullptr) {
         gLogger.log("Renderer could not be created! SDL_Error: " + std::string(SDL_GetError()));
     }
-
-    // int imgFlags = IMG_INIT_PNG | IMG_INIT_JPG;
-    // if (!(IMG_Init(imgFlags) & imgFlags)) {
-    //     gLogger.log("SDL_image could not initialize! IMG_Error: " + std::string(IMG_GetError()));
-    //     return false;
-    // }
 
     if (!driverFound) 
     {

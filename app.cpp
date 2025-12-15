@@ -42,9 +42,9 @@ bool Application::Initialise( bool continueOnFail )
     if (!loggerOpened) {
         println("Failed to open log file: ", config.LogFile);
     }
-
     gLogger.log("Log level set to: ", (int)logLevel);
 
+    //1 SDL
     if (!sdl.Initialise(config.WindowTitle, config.DrawMode, config.RGBOrder, config.SDLAutoInit))
     {
         gLogger.log("Failed to initialize SDL!");
@@ -55,8 +55,9 @@ bool Application::Initialise( bool continueOnFail )
     }
     gLogger.log("Initialized SDL ", sdl.isInitialized() ? "OK" : "ERROR");
 
+    //2 DB / NET
     bool redisConn = redis.Connect();
-    if ( ! redisConn)
+    if ( ! redisConn )
     {
         gLogger.log("Failed to connect to Redis server!");
     }

@@ -4,6 +4,7 @@
 
 #include <memory>
 #include <string>
+#include <thread>
 
 #include "print.h"
 #include "logger.h"
@@ -19,7 +20,21 @@ RedisConnect::RedisConnect(const std::string_view host, int port)
 
 bool RedisConnect::Connect() 
 {
+    bool ok = tryConnect();
+
+    if( ! ok ) {
+        retryConnect(5, 2); // 5 tries, 2 sec interval
+    }
+
+    return true;
+}
+
+bool RedisConnect::tryConnect() 
+{
     context.reset(redisConnect(host.c_str(), port));
+
+    bool ok = true;
+
     if (!context || context->err) 
     {
         if (context) 
@@ -27,15 +42,43 @@ bool RedisConnect::Connect()
             gLogger.log("Connection error: ", context->errstr);
             context.reset();
         } 
-        else 
-        {
+        else  {
             gLogger.log("Connection error: can't allocate redis context");
         }
-        return false;
+
+        ok = false;
     }
 
-    gLogger.log("Connected to Redis at ", host, ":", port);
-    return true;
+    if( ok ) {
+        gLogger.log("Connected to Redis at ", host, ":", port);
+    }
+
+    return ok;
+}
+
+
+bool RedisConnect::retryConnect(int maxTries, int intervalSeconds)
+{
+    int attempts = 0;    
+    while (attempts < maxTries)
+    {
+        attempts++;
+        gLogger.log("Auto-connect attempt ", attempts, " of ", maxTries);
+        
+        if (tryConnect())
+        {
+            return true;
+        }
+        
+        if (attempts < maxTries)
+        {
+            gLogger.log("Retrying in ", intervalSeconds, " seconds...");
+            std::this_thread::sleep_for(std::chrono::seconds(intervalSeconds));
+        }
+    }
+    
+    gLogger.log("Auto-connect failed after ", maxTries, " attempts");
+    return false;
 }
 
 void RedisConnect::Disconnect()

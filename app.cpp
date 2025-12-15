@@ -135,7 +135,7 @@ void Application::updateFromRedis()
                 crntImgName = id;
             }
 
-            println(ok? "Success" : "Failure", "=Polled image: img",  id, ".png");
+            println(ok? "OK":"ERR", " (display) Polled image: img",  id, ".png");
         }
         last_check = now;
     }
@@ -177,10 +177,10 @@ void Application::handleRemoteCommands()
                 bool ok = sdl.DisplayImage(formImagePath(id));
                 if ( ok )
                 {
-                    crntImgName = id;                    
+                    crntImgName = id;
                 }
 
-                println(ok? "Success" : "Failure", "=Refreshed image: img",  id, ".png");
+                println(ok? "OK" : "ERR", " (display) Refreshed image: img",  id, ".png");
             }
         }
         else if (command == "status") // Send status response

@@ -9,7 +9,7 @@ extern Logger gLogger; // declare external logger instance
 
 #include "sdl_ctx.h"
 
-
+// Construct
 SDLContext::SDLContext(int w, int h) 
     : window(nullptr), renderer(nullptr), texture(nullptr), width(w), height(h) {}
     
@@ -17,7 +17,23 @@ SDLContext::~SDLContext() {
     Shutdown();
 }
 
+//---------------------------------------------------
+//* INIT
 bool SDLContext::Initialise(std::string title) 
+{
+    this->title = title;
+
+    bool ok = tryInitialise();
+
+    if(!ok)
+        startAutoInitialise();
+    else 
+        stopAutoInitialise();
+
+    return ok;
+}
+
+bool SDLContext::tryInitialise() 
 {
     if(initialized) 
     {
@@ -35,7 +51,7 @@ bool SDLContext::Initialise(std::string title)
     // Don't force any driver - let SDL auto-detect first
     if (SDL_Init(SDL_INIT_VIDEO) >= 0) 
     {
-        gLogger.log("SDL initialized with auto-detected driver: " + std::string(SDL_GetCurrentVideoDriver()));
+        gLogger.log("SDL Init with auto-detected driver: " + std::string(SDL_GetCurrentVideoDriver()));
         initialized = true;
     } 
     else 
@@ -97,6 +113,11 @@ bool SDLContext::Initialise(std::string title)
 
 bool SDLContext::DisplayImage(const std::string& image_path) 
 {
+    if(!initialized) 
+    {
+        return false;
+    }
+
     if (texture != nullptr) {
         SDL_DestroyTexture(texture);
         texture = nullptr;

@@ -9,8 +9,7 @@ sudo apt install redis-server
 
 sudo systemctl status redis-server
 
-port 6379
-bind 127.0.0.1 ::1 # inital setting
+# update settings in /etc/redis/redis.conf
+bind 127.0.0.1 ::1 # what IP addresses to listen on
 
-redis-cli
-SET/GET/DEL "keyname" [value]
+

@@ -19,6 +19,11 @@ SDLContext::~SDLContext() {
 
 bool SDLContext::Initialise(std::string title) 
 {
+    if(initialized) 
+    {
+        Shutdown();
+    }
+
     // Try multiple video drivers in order of preference
     const char* x11 = getenv("DISPLAY");
     const char* wayland = getenv("WAYLAND_DISPLAY");
@@ -26,7 +31,6 @@ bool SDLContext::Initialise(std::string title)
     
     // List of video drivers to try in order
     const char* drivers[] = {"fbcon","kmsdrm", "fbdev", "directfb", "x11", "wayland", "dummy", nullptr};
-    bool initialized = false;
     
     // Don't force any driver - let SDL auto-detect first
     if (SDL_Init(SDL_INIT_VIDEO) >= 0) 
@@ -135,4 +139,6 @@ void SDLContext::Shutdown()
     }
     IMG_Quit();
     SDL_Quit();
+
+    initialized = false;
 }

@@ -24,7 +24,7 @@ public:
         int screen_width = 800;
         int screen_height = 600;
         std::string WindowTitle = "Redis Image Viewer";
-        std::string LogFile = "/var/lib/redis-image-viewer/log.txt";
+        std::string LogFile = ""; // to console
 
         Config( std::string file );
         

@@ -12,6 +12,7 @@ private:
     SDL_Texture* texture;
     int width;
     int height;
+    bool initialized = false;
 
 public:
     SDLContext(int w = 640, int h = 480);
@@ -20,5 +21,6 @@ public:
     bool Initialise(std::string title);
     bool DisplayImage(const std::string& image_path);
     void Shutdown();
+    bool isInitialized() const { return initialized; }
 };
-        
+

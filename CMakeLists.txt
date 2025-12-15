@@ -16,7 +16,7 @@ find_package(SDL2 REQUIRED)
 pkg_check_modules(SDL2_IMAGE REQUIRED SDL2_image)
 
 # Define the executable
-add_executable(redis_image_viewer main.cpp app.cpp sdl_ctx.cpp app_cfg.cpp json11.cpp)
+add_executable(redis_image_viewer main.cpp app.cpp sdl_ctx.cpp redis_conn.cpp app_cfg.cpp json11.cpp)
 
 # Include directories
 target_include_directories(redis_image_viewer PRIVATE

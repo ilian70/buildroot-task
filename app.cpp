@@ -1,8 +1,10 @@
 #include <chrono>
 #include <thread>
 
-#include "app.h"
 #include "logger.h"
+#include "print.h"
+
+#include "app.h"
 
 Logger gLogger; // global logger instance
 
@@ -51,21 +53,18 @@ bool Application::Initialise( bool continueOnFail )
             return false;
         }
     }
-    gLogger.log("Initialized SDL OK");
+    gLogger.log("Initialized SDL ", sdl.isInitialized() ? "OK" : "ERROR");
 
-    bool redisConnected = redis.Connect();
-    if (!redisConnected)
+    bool redisConn = redis.Connect();
+    if ( ! redisConn)
     {
         gLogger.log("Failed to connect to Redis server!");
-        println("Failed to connect to Redis server!");
     }
     else {
         gLogger.log("Connected to Redis server OK");
-        println("Connected to Redis server OK");
     }
 
-    gLogger.log("Application initialization OK");
-    println("Application initialization OK");
+    gLogger.log("Application initialization DONE.");
 
     return true; // NOTE: continue even if SDL or Redis failed
 }

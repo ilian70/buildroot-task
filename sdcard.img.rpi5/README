@@ -1,0 +1,27 @@
+Raspberry Pi 5 image, generated with BuildRoot ver 2025.11.x
+
+Login/passw: root/root
+
+Enabled:
+systemd
+drm,kms
+
+Packages:
+SDL2
+Redis
+
+
+Application added as service on startup
+/usr/lib/systemd/system/redis-image-viewer.service
+
+Data is in:
+/var/lib/redis-image-viewer/
+
+Config file is in:
+/etc/redis-image-viewer/config
+
+NOTE: As for now - Graphics modules aren't loaded correctly ! (only text messages available from application)
+
+
+ps aux | grep redis-view*
+<PID> root /usr/bin/redis_image_viewer --config /etc/redis-image-viewer/config.txt

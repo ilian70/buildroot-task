@@ -16,7 +16,7 @@ find_package(SDL2 REQUIRED)
 pkg_check_modules(SDL2_IMAGE REQUIRED SDL2_image)
 
 # Define the executable
-add_executable(redis_image_viewer main.cpp app.cpp app_cfg.cpp json11.cpp)
+add_executable(redis_image_viewer main.cpp app.cpp sdl_ctx.cpp app_cfg.cpp json11.cpp)
 
 # Include directories
 target_include_directories(redis_image_viewer PRIVATE
@@ -34,9 +34,9 @@ target_link_libraries(redis_image_viewer
 
 # Install the binary and default config into the target rootfs
 install(TARGETS redis_image_viewer RUNTIME DESTINATION bin)
-install(FILES app.cfg.json DESTINATION etc/redis-image-viewer RENAME config.json)
+install(FILES app.cfg.json DESTINATION /etc/redis-image-viewer RENAME config.json)
 # Create images directory and install sample images
-install(DIRECTORY DESTINATION var/lib/redis-image-viewer/images)
+install(DIRECTORY DESTINATION /var/lib/redis-image-viewer/images)
 if(EXISTS "${CMAKE_SOURCE_DIR}/images")
-    install(DIRECTORY images/ DESTINATION var/lib/redis-image-viewer/images FILES_MATCHING PATTERN "*.png")
+    install(DIRECTORY images/ DESTINATION /var/lib/redis-image-viewer/images FILES_MATCHING PATTERN "*.png")
 endif()

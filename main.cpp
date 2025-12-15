@@ -11,9 +11,8 @@ int main(int argc, char *argv[])
 
     Application app( cfg ); // instantiate with config
 
-    
 
-    if (!app.Initialise())
+    if ( ! app.Initialise(true) )
     {
         return 1;
     }

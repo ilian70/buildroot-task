@@ -23,7 +23,8 @@ public:
     }
     
     template<typename... Args>
-    void log(Args&&... args) {
+    void log(Args&&... args) 
+    {
         std::lock_guard<std::mutex> lock(logMutex);
         if (logFile.is_open()) {
             auto now = std::chrono::system_clock::now();

@@ -34,7 +34,7 @@ public:
 
     // API
     Application( Config cfg);    
-    bool Initialise();
+    bool Initialise(bool continueOnFail );
     void Run();
     void Shutdown();
 

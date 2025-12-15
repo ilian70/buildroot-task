@@ -34,7 +34,7 @@ int Application::parse_argv(int argc, char *argv[])
 
 
 
-bool Application::Initialise()
+bool Application::Initialise( bool continueOnFail )
 {
     bool loggerOpened = gLogger.Open( config.LogFile );
     if (!loggerOpened) {
@@ -46,7 +46,10 @@ bool Application::Initialise()
     if (!sdl.Initialise(config.WindowTitle))
     {
         gLogger.log("Failed to initialize SDL!");
-        return false;
+
+        if (!continueOnFail) {
+            return false;
+        }
     }
     gLogger.log("Initialized SDL OK");
 
@@ -54,12 +57,17 @@ bool Application::Initialise()
     if (!redisConnected)
     {
         gLogger.log("Failed to connect to Redis server!");
+        println("Failed to connect to Redis server!");
     }
     else {
         gLogger.log("Connected to Redis server OK");
+        println("Connected to Redis server OK");
     }
 
-    return true;
+    gLogger.log("Application initialization OK");
+    println("Application initialization OK");
+
+    return true; // NOTE: continue even if SDL or Redis failed
 }
 
 void Application::Run()
@@ -122,10 +130,13 @@ void Application::updateFromRedis()
 
         if (!id.empty() && id != crntImgName)
         {
-            if (sdl.DisplayImage(formImagePath(id)))
+            bool ok = sdl.DisplayImage(formImagePath(id));
+            if (ok)
             {
                 crntImgName = id;
             }
+
+            println(ok? "Success" : "Failure", "=Polled image: img",  id, ".png");
         }
         last_check = now;
     }
@@ -159,22 +170,22 @@ void Application::handleRemoteCommands()
     {
         println("Received remote command: ", command);
         
-        if (command == "refresh")
+        if (command == "refresh") // Force refresh of current image
         {
-            // Force refresh of current image
             auto id = redis.GetString(std::string(config.KEY));
             if (!id.empty())
             {
-                if (sdl.DisplayImage(formImagePath(id)))
+                bool ok = sdl.DisplayImage(formImagePath(id));
+                if ( ok )
                 {
-                    crntImgName = id;
-                    println("Refreshed image: img", id, ".png");
+                    crntImgName = id;                    
                 }
+
+                println(ok? "Success" : "Failure", "=Refreshed image: img",  id, ".png");
             }
         }
-        else if (command == "status")
+        else if (command == "status") // Send status response
         {
-            // Send status response
             std::string status = "Running - Current Image: " + crntImgName;
             redis.SetString("App:Response", status);
         }

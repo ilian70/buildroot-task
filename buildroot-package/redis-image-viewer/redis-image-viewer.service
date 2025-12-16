@@ -5,8 +5,8 @@ Documentation=man:systemd.service(5)
 Requires=network-online.target
 Requires=network.target
 Wants=graphics.target
-After=network.target network-online.target systemd-udev-settle.service
-After=sys-devices-virtual-dri-card0.device
+# After=network.target network-online.target systemd-udev-settle.service
+# After=sys-devices-virtual-dri-card0.device
 
 
 [Service]
